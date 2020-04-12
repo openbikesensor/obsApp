@@ -1,0 +1,17 @@
+<div class="track-meta">
+  <a [routerLink]="['/profile', track.author.username]">
+    <img [src]="track.author.image" />
+  </a>
+
+  <div class="info">
+    <a class="author"
+      [routerLink]="['/profile', track.author.username]">
+      {{ track.author.username }}
+    </a>
+    <span class="date">
+      {{ track.createdAt | date: 'longDate' }}
+    </span>
+  </div>
+
+  <ng-content></ng-content>
+</div>

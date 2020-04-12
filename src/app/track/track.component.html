@@ -1,0 +1,95 @@
+<div class="track-page">
+
+  <div class="banner">
+    <div class="container">
+      <h1>{{ track.title }}</h1>
+
+      <app-track-meta [track]="track">
+
+          <span [hidden]="!canModify">
+          <a class="btn btn-sm btn-outline-secondary"
+             [routerLink]="['/editor', track.slug]">
+            <i class="ion-edit"></i> Edit Track
+          </a>
+
+          <button class="btn btn-sm btn-outline-danger"
+            [ngClass]="{disabled: isDeleting}"
+            (click)="deleteTrack()">
+            <i class="ion-trash-a"></i> Delete Track
+          </button>
+        </span>
+
+      </app-track-meta>
+    </div>
+  </div>
+
+  <div class="container page">
+
+    <div class="row track-content">
+      <div class="col-md-12">
+
+        <div [innerHTML]="track.body | markdown"></div>
+
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="track-actions">
+      <app-track-meta [track]="track">
+
+          <span [hidden]="!canModify">
+          <a class="btn btn-sm btn-outline-secondary"
+             [routerLink]="['/editor', track.slug]">
+            <i class="ion-edit"></i> Edit Track
+          </a>
+
+          <button class="btn btn-sm btn-outline-danger"
+            [ngClass]="{disabled: isDeleting}"
+            (click)="deleteTrack()">
+            <i class="ion-trash-a"></i> Delete Track
+          </button>
+        </span>
+
+      </app-track-meta>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-8 offset-md-2">
+
+        <div *appShowAuthed="true">
+          <app-list-errors [errors]="commentFormErrors"></app-list-errors>
+          <form class="card comment-form" (ngSubmit)="addComment()">
+            <fieldset [disabled]="isSubmitting">
+              <div class="card-block">
+                <textarea class="form-control"
+                  placeholder="Write a comment..."
+                  rows="3"
+                  [formControl]="commentControl"
+                ></textarea>
+              </div>
+              <div class="card-footer">
+                <img [src]="currentUser.image" class="comment-author-img" />
+                <button class="btn btn-sm btn-primary" type="submit">
+                 Post Comment
+                </button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div *appShowAuthed="false">
+          <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on this track.
+        </div>
+
+        <app-track-comment
+          *ngFor="let comment of comments"
+          [comment]="comment"
+          (deleteComment)="onDeleteComment(comment)">
+        </app-track-comment>
+
+      </div>
+    </div>
+
+  </div>
+</div>

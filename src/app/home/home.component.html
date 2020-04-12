@@ -1,0 +1,38 @@
+<div class="home-page">
+
+  <div class="banner" *appShowAuthed="false">
+    <div class="container">
+      <h1 class="logo-font">OpenBikeSensor</h1>
+      <p>manage your tracks online.</p>
+    </div>
+  </div>
+
+  <div class="container page">
+    <div class="row">
+
+      <div class="col-md-9">
+        <div class="feed-toggle">
+          <ul class="nav nav-pills outline-active">
+            <li class="nav-item">
+              <a class="nav-link"
+                 [ngClass]="{'active': listConfig.type === 'feed'}"
+                 (click)="setListTo('feed')">
+                 Your Feed
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"
+                 [ngClass]="{'active': listConfig.type === 'all'}"
+                 (click)="setListTo('all')">
+                 Global Feed
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <app-track-list [limit]="10" [config]="listConfig"></app-track-list>
+      </div>
+
+    </div>
+  </div>
+</div>
