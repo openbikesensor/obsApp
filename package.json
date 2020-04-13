@@ -1,7 +1,7 @@
 {
-  "name": "ang2-conduit",
+  "name": "obsApp",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "LGPLv3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

@@ -9,6 +9,6 @@ describe('ng-demo App', () => {
 
   it('should display message saying app works', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toContain('conduit');
+    expect(page.getParagraphText()).toContain('obsApp');
   });
 });
