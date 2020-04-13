@@ -28,8 +28,18 @@
     <div class="row track-content">
       <div class="col-md-12">
 
-        <div [innerHTML]="track.body | markdown"></div>
 
+        <div [innerHTML]="track.body | markdown"></div>
+        
+      </div>
+    </div>
+    <div class="row track-content">
+      <div class="col-md-12">
+
+        <div class="map-frame">
+          <div id="trackMapView"></div>
+        </div>
+        
       </div>
     </div>
 

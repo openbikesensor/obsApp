@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as L from 'leaflet';
 
 import {
   Track,
@@ -43,6 +44,18 @@ export class TrackComponent implements OnInit {
         this.populateComments();
       }
     );
+
+    const trackMapView = L.map('trackMapView').setView([48.7784, 9.1797], 13);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors,\
+    <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,\
+       Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoidXdldyIsImEiOiJjazh5ZmgybGYwMWVqM2tsN3k4ZmRsMzJiIn0.RplaQqYejNJe1MEhszvGIw'
+}).addTo(trackMapView);
 
     // Load the current user's data
     this.userService.currentUser.subscribe(
