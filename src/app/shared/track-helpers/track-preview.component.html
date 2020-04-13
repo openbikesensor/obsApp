@@ -1,10 +1,10 @@
-<div class="track-preview">
+<div class="article-preview">
   <app-track-meta [track]="track">
   </app-track-meta>
 
   <a [routerLink]="['/track', track.slug]" class="preview-link">
     <h1>{{ track.title }}</h1>
     <p>{{ track.description }}</p>
-    <span>Read more...</span>
+    <span>Track details...</span>
   </a>
 </div>
