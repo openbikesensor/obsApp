@@ -51,7 +51,7 @@ export class TrackComponent implements OnInit {
     {
       lat = this.track.points[i].latitude;
       long = this.track.points[i].longitude;
-      if (lat != 0.0 && long != 0.0)
+      if (lat !== 0.0 && long !== 0.0)
       {
          break;
       }
@@ -68,22 +68,22 @@ export class TrackComponent implements OnInit {
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoidXdldyIsImEiOiJjazh5ZmgybGYwMWVqM2tsN3k4ZmRsMzJiIn0.RplaQqYejNJe1MEhszvGIw'
 }).addTo(trackMapView);
-let points = [];
+const points = [];
 while ( i < this.track.points.length)
 {
   lat = this.track.points[i].latitude;
   long = this.track.points[i].longitude;
-  if (lat != 0.0 && long != 0.0)
+  if (lat !== 0.0 && long !== 0.0)
   {
      points.push( [lat, long] );
-     if(this.track.points[i].flag == 1)
+     if (this.track.points[i].flag === 1)
      {
-      var marker = L.marker([lat, long]).addTo(trackMapView);
+      L.marker([lat, long]).addTo(trackMapView);
      }
   }
   i++;
 }
-let tr = L.polyline(points).addTo(trackMapView);;
+const tr = L.polyline(points).addTo(trackMapView);
     // Load the current user's data
     this.userService.currentUser.subscribe(
       (userData: User) => {
