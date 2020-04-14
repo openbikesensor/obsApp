@@ -14,4 +14,4 @@
     border: 2px solid black;
     height: 100%;
   }
-#trackMapView { height: 400px; }
+#trackMapView { height: 400px; min-width: 480px;}
