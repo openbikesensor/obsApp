@@ -101,7 +101,7 @@ export class TrackComponent implements OnInit {
     this.userService.currentUser.subscribe(
       (userData: User) => {
         this.currentUser = userData;
-        this.canModify = (this.currentUser.username === this.track.author.username);});
+        this.canModify = (this.currentUser.username === this.track.author.username); });
     let lat = 48.7784;
     let long = 9.1797;
     let i = 0;
@@ -129,8 +129,8 @@ export class TrackComponent implements OnInit {
       })
     );
 
-    var trackPoints = [];
-    var trackLines = [];
+    const trackPoints = [];
+    const trackLines = [];
     const points = [];
     if (this.trackData) {
       while (i < this.trackData.points.length) {
@@ -138,7 +138,7 @@ export class TrackComponent implements OnInit {
         long = this.trackData.points[i].longitude;
         if (lat !== 0.0 && long !== 0.0) {
           const p = fromLonLat([long, lat]);
-          //var p = transform([long, lat], 'EPSG:4326', 'EPSG:3857');
+          // var p = transform([long, lat], 'EPSG:4326', 'EPSG:3857');
           points.push(p);
           trackPoints.push(
             new Feature({
@@ -149,7 +149,7 @@ export class TrackComponent implements OnInit {
             })
           );
           if (this.trackData.points[i].flag === 1) {
-            //L.marker([lat, long]).addTo(trackMapView);
+            // L.marker([lat, long]).addTo(trackMapView);
           }
           console.log(this.trackData.points[i].d2);
         }
@@ -162,7 +162,7 @@ export class TrackComponent implements OnInit {
       );
     }
 
-    var trackLayer =
+    const trackLayer =
       new VectorLayer({
         visible: true,
         updateWhileAnimating: false,
@@ -181,8 +181,8 @@ export class TrackComponent implements OnInit {
       });
 
     this.layers.push(trackLayer);
-    let oldColor = 'rgba(255,0,0,0.61)';
-    let newColor = 'rgba(0,255,0,0.61)';
+    const oldColor = 'rgba(255,0,0,0.61)';
+    const newColor = 'rgba(0,255,0,0.61)';
     const style = {
       variables: {
         minYear: 1850,
@@ -202,7 +202,7 @@ export class TrackComponent implements OnInit {
         opacity: 0.5
       }
     };
-    var pointLayer =
+    const pointLayer =
       new WebGLPointsLayer(
         {
           visible: true,
@@ -214,7 +214,7 @@ export class TrackComponent implements OnInit {
 
         });
     this.layers.push(pointLayer);
-    var map = new Map({
+    const olMap = new Map({
       layers: this.layers,
       target: 'trackMapView',
       view: new View({
