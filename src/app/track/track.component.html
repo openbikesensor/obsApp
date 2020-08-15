@@ -76,6 +76,18 @@ cursor: pointer;
             <i class="ion-trash-a"></i> Delete Track
           </button>
         </span>
+        
+        <button class="btn btn-sm btn-outline-secondary"
+        [ngClass]="{disabled: isExporting}"
+        (click)="exportGPX()">
+        <i class="ion-share"></i> Export GPX
+      </button>
+
+      <button class="btn btn-sm btn-outline-secondary"
+      [ngClass]="{disabled: isExporting}"
+      (click)="exportCSV()">
+      <i class="ion-clipboard"></i> Export CSV
+    </button>
 
       </app-track-meta>
     </div>

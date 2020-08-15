@@ -76,6 +76,7 @@ export class TrackComponent implements OnInit {
   commentFormErrors = {};
   isSubmitting = false;
   isDeleting = false;
+  isExporting = false;
   layers = [];
 
   constructor(
@@ -247,6 +248,66 @@ export class TrackComponent implements OnInit {
       );
   }
 
+  exportGPX() {
+    this.isExporting = true;
+    let fileContents = '<?xml version="1.0"?>\n' +
+                         '<gpx version="1.1" creator="openbikesensor.hlrs.de">\n';
+    fileContents += '<trk>\n';
+    fileContents += '<trkseg>\n';
+    let nameCounter = 1;
+    for (const p of this.trackData.points) {
+      fileContents += '<trkpt  lat="' + p.latitude + '" lon="' + p.longitude + '">\n' +
+        '<name>' + nameCounter + '</name>\n';
+      if (p.flag > 0) {
+        fileContents += '<sym>Flag</sym>\n';
+      }
+      fileContents += '<cmt> d1="' + p.d1 + '" d2="' + p.d2 + '" </cmt>\n';
+      fileContents += '</trkpt>\n';
+      nameCounter++;
+    }
+    fileContents += '</trkseg>\n';
+    fileContents += '</trk>\n';
+    fileContents += '</gpx>';
+    const filename = 'track.gpx';
+    const filetype = 'text/plain';
+    const a = document.createElement('a');
+    const dataURI = 'data:' + filetype +
+        ';base64,' + btoa(fileContents);
+    a.href = dataURI;
+    a['download'] = filename;
+    const e = document.createEvent('MouseEvents');
+    // Use of deprecated function to satisfy TypeScript.
+    e.initMouseEvent('click', true, false,
+        document.defaultView, 0, 0, 0, 0, 0,
+        false, false, false, false, 0, null);
+    a.dispatchEvent(e);
+    a.remove();
+    this.isExporting = false;
+  }
+  exportCSV() {
+    this.isExporting = true;
+    let fileContents = 'Date;Time;Latitude;Longitude;Course;Speed;Right;Left;Confirmed;insidePrivacyArea\n';
+    for(const p of this.trackData.points)
+    {
+      fileContents += p.date + ';' + p.time + ';' + p.latitude + ';' + p.longitude + ';' +
+                      p.course + ';' + p.speed + ';' + p.d1 + ';' + p.d2 + ';' + p.flag + ';' + p.private + ';\n';
+    }
+    const filename = 'track.csv';
+    const filetype = 'text/plain';
+    const a = document.createElement('a');
+    const dataURI = 'data:' + filetype +
+        ';base64,' + btoa(fileContents);
+    a.href = dataURI;
+    a['download'] = filename;
+    const e = document.createEvent('MouseEvents');
+    // Use of deprecated function to satisfy TypeScript.
+    e.initMouseEvent('click', true, false,
+        document.defaultView, 0, 0, 0, 0, 0,
+        false, false, false, false, 0, null);
+    a.dispatchEvent(e);
+    a.remove();
+    this.isExporting = false;
+  }
   populateComments() {
     this.commentsService.getAll(this.track.slug)
       .subscribe(comments => this.comments = comments);

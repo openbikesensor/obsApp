@@ -4,9 +4,12 @@ export interface TPoint {
   time: string;
   latitude: number;
   longitude: number;
+  course: number;
+  speed: number;
   d1: number;
   d2: number;
   flag: number;
+  private: number;
 }
 
 export interface TrackData {
