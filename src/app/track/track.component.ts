@@ -93,8 +93,6 @@ export class TrackComponent implements OnInit {
     this.route.data.subscribe(
       (data: { track: Track }) => {
         this.track = data.track;
-        this.populateComments();
-        this.populateTrackData();
       }
     );
     // Load the current user's data
@@ -102,6 +100,14 @@ export class TrackComponent implements OnInit {
       (userData: User) => {
         this.currentUser = userData;
         this.canModify = (this.currentUser.username === this.track.author.username); });
+    this.populateComments();
+    this.populateTrackData();
+  }
+  createMap()
+  {
+    console.log(this.track.description);
+    console.log(this.track.slug);
+    console.log(this.trackData.points.length);
     let lat = 48.7784;
     let long = 9.1797;
     let i = 0;
@@ -151,7 +157,7 @@ export class TrackComponent implements OnInit {
           if (this.trackData.points[i].flag === 1) {
             // L.marker([lat, long]).addTo(trackMapView);
           }
-          console.log(this.trackData.points[i].d2);
+          //console.log(this.trackData.points[i].d2);
         }
         i++;
       }
@@ -247,9 +253,9 @@ export class TrackComponent implements OnInit {
   }
 
   populateTrackData() {
-    this.trackData = this.trackDataService.getTrackData(this.track.slug);
-    /*this.trackDataService.getAll(this.track.slug)
-      .subscribe(trackData => this.trackData = trackData);*/
+    // this.trackData = this.trackDataService.getTrackData(this.track.slug);
+    this.trackDataService.getAll(this.track.slug)
+      .subscribe(trackData => {this.trackData = trackData; this.createMap(); });
   }
 
   addComment() {
