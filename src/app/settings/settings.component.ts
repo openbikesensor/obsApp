@@ -26,7 +26,7 @@ export class SettingsComponent implements OnInit {
       bio: '',
       email: '',
       password: '',
-      areTracksVisibleForAll: ''
+      areTracksVisibleForAll: false
     });
     // Optional: subscribe to changes on the form
     // this.settingsForm.valueChanges.subscribe(values => this.updateUser(values));
@@ -36,6 +36,7 @@ export class SettingsComponent implements OnInit {
     // Make a fresh copy of the current user's object to place in editable form fields
     Object.assign(this.user, this.userService.getCurrentUser());
     // Fill the form
+    console.log(this.user);
     this.settingsForm.patchValue(this.user);
   }
 
