@@ -25,4 +25,5 @@ export interface Track {
   updatedAt: string;
   author: Profile;
   trackData: TrackData;
+  visible: Boolean;
 }

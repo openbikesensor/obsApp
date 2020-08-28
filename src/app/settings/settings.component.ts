@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { User, UserService } from '../core';
@@ -22,10 +22,13 @@ export class SettingsComponent implements OnInit {
     // create form group using the form builder
     this.settingsForm = this.fb.group({
       image: '',
-      username: '',
+      username: ['', [Validators.required]],
       bio: '',
-      email: '',
-      password: '',
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [
+          Validators.required,
+          Validators.pattern('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})')
+      ]],
       areTracksVisibleForAll: false
     });
     // Optional: subscribe to changes on the form

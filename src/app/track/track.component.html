@@ -75,6 +75,11 @@ cursor: pointer;
             (click)="deleteTrack()">
             <i class="ion-trash-a"></i> Delete Track
           </button>
+          
+            <label><input class="btn btn-sm btn-outline-danger"
+              type="checkbox"
+              (change)="onChange($event.target.checked)"
+              checked="{{ track.visible }}"/> visible </label>
         </span>
         
         <button class="btn btn-sm btn-outline-secondary"

@@ -237,6 +237,14 @@ export class TrackComponent implements OnInit {
     this.track.author.following = following;
   }
 
+  onChange(isChecked: boolean) {
+    this.track.visible = isChecked;
+    this.tracksService.save(this.track)
+    .subscribe(
+      success => {
+      }
+    );
+  }
   deleteTrack() {
     this.isDeleting = true;
 
