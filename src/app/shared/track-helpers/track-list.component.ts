@@ -7,13 +7,13 @@ import { Track, TrackListConfig, TracksService } from '../../core';
   templateUrl: './track-list.component.html'
 })
 export class TrackListComponent {
-  constructor (
+  constructor(
     private tracksService: TracksService
-  ) {}
+  ) { }
 
   @Input() limit: number;
   @Input()
-  set config(config: TrackListConfig) {
+  set config(config: TrackListConfig | undefined) {
     if (config) {
       this.query = config;
       this.currentPage = 1;
@@ -39,16 +39,16 @@ export class TrackListComponent {
     // Create limit and offset filter (if necessary)
     if (this.limit) {
       this.query.filters.limit = this.limit;
-      this.query.filters.offset =  (this.limit * (this.currentPage - 1));
+      this.query.filters.offset = (this.limit * (this.currentPage - 1));
     }
 
     this.tracksService.query(this.query)
-    .subscribe(data => {
-      this.loading = false;
-      this.results = data.tracks;
+      .subscribe(data => {
+        this.loading = false;
+        this.results = data.tracks;
 
-      // Used from http://www.jstips.co/en/create-range-0...n-easily-using-one-line/
-      this.totalPages = Array.from(new Array(Math.ceil(data.tracksCount / this.limit)), (val, index) => index + 1);
-    });
+        // Used from http://www.jstips.co/en/create-range-0...n-easily-using-one-line/
+        this.totalPages = Array.from(new Array(Math.ceil(data.tracksCount / this.limit)), (val, index) => index + 1);
+      });
   }
 }

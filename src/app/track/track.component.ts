@@ -7,10 +7,11 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM, { ATTRIBUTION } from 'ol/source/OSM';
 import { transform } from 'ol/proj.js';
-import { LineString, Point, Polygon } from 'ol/geom';
+import { Geometry, LineString, Point, Polygon } from 'ol/geom';
 import { Vector as VectorLayer } from 'ol/layer';
 import { TileJSON, Vector as VectorSource } from 'ol/source';
 import { Fill, Icon, Stroke, Style } from 'ol/style';
+import { SymbolType } from 'ol/style/LiteralStyle';
 import Feature from 'ol/Feature';
 import proj4 from 'proj4';
 import { register } from 'ol/proj/proj4';
@@ -33,6 +34,8 @@ import {
   User,
   UserService
 } from '../core';
+import { LiteralStyle } from 'ol/style/LiteralStyle';
+import { Coordinate } from 'ol/coordinate';
 
 
 
@@ -48,12 +51,8 @@ export class CustomLayer extends VectorLayer {
   }
   createRenderer() {
     return new Renderer(this, {
-      colorCallback: function (feature, vertex, component) {
-        return color[component];
-      },
-      sizeCallback: function (feature) {
-        return 18 * clamp(feature.get('d1') / 3, 0, 1) + 8;
-      }
+      vertexShader: '',
+      fragmentShader: ''
     });
   }
 }
@@ -77,7 +76,7 @@ export class TrackComponent implements OnInit {
   isSubmitting = false;
   isDeleting = false;
   isExporting = false;
-  layers = [];
+  layers: (VectorLayer | TileLayer | WebGLPointsLayer)[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -100,12 +99,12 @@ export class TrackComponent implements OnInit {
     this.userService.currentUser.subscribe(
       (userData: User) => {
         this.currentUser = userData;
-        this.canModify = (this.currentUser.username === this.track.author.username); });
+        this.canModify = (this.currentUser.username === this.track.author.username);
+      });
     this.populateComments();
     this.populateTrackData();
   }
-  createMap()
-  {
+  createMap() {
     console.log(this.track.description);
     console.log(this.track.slug);
     console.log(this.trackData.points.length);
@@ -136,9 +135,9 @@ export class TrackComponent implements OnInit {
       })
     );
 
-    const trackPoints = [];
-    const trackLines = [];
-    const points = [];
+    const trackPoints: Feature<Geometry>[] = [];
+    const trackLines: Feature[] = [];
+    const points: Coordinate[] = [];
     if (this.trackData) {
       while (i < this.trackData.points.length) {
         lat = this.trackData.points[i].latitude;
@@ -158,7 +157,7 @@ export class TrackComponent implements OnInit {
           if (this.trackData.points[i].flag === 1) {
             // L.marker([lat, long]).addTo(trackMapView);
           }
-          //console.log(this.trackData.points[i].d2);
+          // console.log(this.trackData.points[i].d2);
         }
         i++;
       }
@@ -175,7 +174,6 @@ export class TrackComponent implements OnInit {
         updateWhileAnimating: false,
         updateWhileInteracting: false,
         source: new VectorSource({
-          projection: 'EPSG:3857',
           features: trackLines
         }),
         style: new Style({
@@ -190,13 +188,13 @@ export class TrackComponent implements OnInit {
     this.layers.push(trackLayer);
     const oldColor = 'rgba(255,0,0,0.61)';
     const newColor = 'rgba(0,255,0,0.61)';
-    const style = {
+    const style: LiteralStyle = {
       variables: {
         minYear: 1850,
         maxYear: 2015
       },
       symbol: {
-        symbolType: 'circle',
+        symbolType: SymbolType.CIRCLE,
         size: ['*',
           ['interpolate', ['linear'], ['get', 'd1'], 255, 8, 0, 26],
           1.0],
@@ -213,9 +211,9 @@ export class TrackComponent implements OnInit {
       new WebGLPointsLayer(
         {
           visible: true,
+
           style: style,
           source: new VectorSource({
-            projection: 'EPSG:3857',
             features: trackPoints
           }),
 
@@ -240,10 +238,10 @@ export class TrackComponent implements OnInit {
   onChange(isChecked: boolean) {
     this.track.visible = isChecked;
     this.tracksService.save(this.track)
-    .subscribe(
-      success => {
-      }
-    );
+      .subscribe(
+        success => {
+        }
+      );
   }
   deleteTrack() {
     this.isDeleting = true;
@@ -259,7 +257,7 @@ export class TrackComponent implements OnInit {
   exportGPX() {
     this.isExporting = true;
     let fileContents = '<?xml version="1.0"?>\n' +
-                         '<gpx version="1.1" creator="openbikesensor.hlrs.de">\n';
+      '<gpx version="1.1" creator="openbikesensor.hlrs.de">\n';
     fileContents += '<trk>\n';
     fileContents += '<trkseg>\n';
     let nameCounter = 1;
@@ -280,14 +278,14 @@ export class TrackComponent implements OnInit {
     const filetype = 'text/plain';
     const a = document.createElement('a');
     const dataURI = 'data:' + filetype +
-        ';base64,' + btoa(fileContents);
+      ';base64,' + btoa(fileContents);
     a.href = dataURI;
     a['download'] = filename;
     const e = document.createEvent('MouseEvents');
     // Use of deprecated function to satisfy TypeScript.
     e.initMouseEvent('click', true, false,
-        document.defaultView, 0, 0, 0, 0, 0,
-        false, false, false, false, 0, null);
+      document.defaultView ?? window, 0, 0, 0, 0, 0,
+      false, false, false, false, 0, null);
     a.dispatchEvent(e);
     a.remove();
     this.isExporting = false;
@@ -295,23 +293,22 @@ export class TrackComponent implements OnInit {
   exportCSV() {
     this.isExporting = true;
     let fileContents = 'Date;Time;Latitude;Longitude;Course;Speed;Right;Left;Confirmed;insidePrivacyArea\n';
-    for(const p of this.trackData.points)
-    {
+    for (const p of this.trackData.points) {
       fileContents += p.date + ';' + p.time + ';' + p.latitude + ';' + p.longitude + ';' +
-                      p.course + ';' + p.speed + ';' + p.d1 + ';' + p.d2 + ';' + p.flag + ';' + p.private + ';\n';
+        p.course + ';' + p.speed + ';' + p.d1 + ';' + p.d2 + ';' + p.flag + ';' + p.private + ';\n';
     }
     const filename = 'track.csv';
     const filetype = 'text/plain';
     const a = document.createElement('a');
     const dataURI = 'data:' + filetype +
-        ';base64,' + btoa(fileContents);
+      ';base64,' + btoa(fileContents);
     a.href = dataURI;
     a['download'] = filename;
     const e = document.createEvent('MouseEvents');
     // Use of deprecated function to satisfy TypeScript.
     e.initMouseEvent('click', true, false,
-        document.defaultView, 0, 0, 0, 0, 0,
-        false, false, false, false, 0, null);
+      document.defaultView ?? window, 0, 0, 0, 0, 0,
+      false, false, false, false, 0, null);
     a.dispatchEvent(e);
     a.remove();
     this.isExporting = false;
@@ -324,7 +321,7 @@ export class TrackComponent implements OnInit {
   populateTrackData() {
     // this.trackData = this.trackDataService.getTrackData(this.track.slug);
     this.trackDataService.getAll(this.track.slug)
-      .subscribe(trackData => {this.trackData = trackData; this.createMap(); });
+      .subscribe(trackData => { this.trackData = trackData; this.createMap(); });
   }
 
   addComment() {

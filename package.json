@@ -1,6 +1,6 @@
 {
   "name": "obs_app",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "LGPLv3",
   "scripts": {
     "ng": "ng",
@@ -23,12 +23,13 @@
     "@angular/platform-browser": "9.1.1",
     "@angular/platform-browser-dynamic": "9.1.1",
     "@angular/router": "9.1.1",
+    "@types/ol": "^6.4.1",
     "angular-base64": "^2.0.5",
     "angular-osm": "^1.2.2",
     "colormap": "^2.3.1",
     "core-js": "^3.6.5",
     "marked": "^0.8.2",
-    "npm": "^6.14.4",
+    "npm": "^6.14.8",
     "ol": "6.3.1",
     "ol-hashed": "^2.0.0",
     "osm-auth": "^1.0.2",
@@ -40,7 +41,7 @@
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.901.1",
+    "@angular-devkit/build-angular": "~0.901.8",
     "@angular/cli": "^9.1.1",
     "@angular/compiler-cli": "9.1.1",
     "@angular/language-service": "9.1.1",
@@ -57,7 +58,7 @@
     "karma-jasmine": "~3.1.1",
     "karma-jasmine-html-reporter": "^1.5.3",
     "pre-commit": "^1.2.2",
-    "protractor": "^5.4.3",
+    "protractor": "^7.0.0",
     "ts-node": "~8.8.2",
     "tslint": "~6.1.1",
     "typescript": "3.8.3"
