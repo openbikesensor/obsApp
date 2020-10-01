@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
+const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
+
+
 const routes: Routes = [
+  { path: 'account', loadChildren: accountModule },
   {
     path: 'settings',
     loadChildren: './settings/settings.module#SettingsModule'
@@ -29,4 +33,4 @@ const routes: Routes = [
   })],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
