@@ -122,11 +122,11 @@
   "defaultProject": "obsApp",
   "schematics": {
     "@schematics/angular:component": {
-      "prefix": "app",
+      "prefix": "obs",
       "styleext": "css"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "obs"
     }
   }
 }
