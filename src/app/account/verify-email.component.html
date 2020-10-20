@@ -1,9 +1,14 @@
-﻿<h3 class="card-header">Verify Email</h3>
+﻿<h3 class="card-header">E-Mail-Adresse bestätigen</h3>
 <div class="card-body">
-    <div *ngIf="emailStatus == EmailStatus.Verifying">
-        Verifying...
-    </div>
-    <div *ngIf="emailStatus == EmailStatus.Failed">
-        Verification failed, you can also verify your account using the <a routerLink="forgot-password">forgot password</a> page.
-    </div>
+  <div *ngIf="emailStatus == EmailStatus.Verifying">
+    Ihre E-Mail-Adresse wird bestätigt...
+  </div>
+  <div *ngIf="emailStatus == EmailStatus.Failed">
+    Die Bestätigung der E-Mail-Adresse ist leider fehlgeschlagen.
+    <br>
+    Bitte nutzen Sie die <a routerLink="forgot-password">"Passwort vergessen"-Seite</a>, um einen neuen Versuch zu
+    starten.
+  </div>
+
+  <a routerLink="/auth/login" class="btn btn-link">Zurück zum Login</a>
 </div>

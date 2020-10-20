@@ -24,11 +24,6 @@ export class SettingsComponent implements OnInit {
       image: '',
       username: ['', [Validators.required]],
       bio: '',
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-          Validators.required,
-          Validators.pattern('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})')
-      ]],
       areTracksVisibleForAll: false
     });
     // Optional: subscribe to changes on the form
@@ -39,7 +34,6 @@ export class SettingsComponent implements OnInit {
     // Make a fresh copy of the current user's object to place in editable form fields
     Object.assign(this.user, this.userService.getCurrentUser());
     // Fill the form
-    console.log(this.user);
     this.settingsForm.patchValue(this.user);
   }
 
@@ -55,14 +49,14 @@ export class SettingsComponent implements OnInit {
     this.updateUser(this.settingsForm.value);
 
     this.userService
-    .update(this.user)
-    .subscribe(
-      updatedUser => this.router.navigateByUrl('/profile/' + updatedUser.username),
-      err => {
-        this.errors = err;
-        this.isSubmitting = false;
-      }
-    );
+      .update(this.user)
+      .subscribe(
+        updatedUser => this.router.navigateByUrl('/profile/' + updatedUser.username),
+        err => {
+          this.errors = err;
+          this.isSubmitting = false;
+        }
+      );
   }
 
   updateUser(values: Object) {

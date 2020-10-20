@@ -2,10 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
-
+const authModule = () => import('./auth/auth.module').then(x => x.AuthModule);
 
 const routes: Routes = [
   { path: 'account', loadChildren: accountModule },
+  { path: 'auth', loadChildren: authModule },
   {
     path: 'settings',
     loadChildren: './settings/settings.module#SettingsModule'
@@ -26,9 +27,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    // preload all modules; optionally we could
-    // implement a custom preloading strategy for just some
-    // of the modules (PRs welcome 😉)
     preloadingStrategy: PreloadAllModules
   })],
   exports: [RouterModule]

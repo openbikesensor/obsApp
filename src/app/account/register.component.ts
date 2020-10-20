@@ -23,13 +23,10 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      title: ['', Validators.required],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required],
-      acceptTerms: [false, Validators.requiredTrue]
+      confirmPassword: ['', Validators.required]
     }, {
       validator: MustMatch('password', 'confirmPassword')
     });
@@ -54,7 +51,7 @@ export class RegisterComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: () => {
-          this.alertService.success('Registration successful, please check your email for verification instructions', { keepAfterRouteChange: true });
+          this.alertService.success('Registrierung abgeschlossen - bitte prüfen Sie Ihr Postfach für die E-Mail mit den Infos wie es weitergeht.', { keepAfterRouteChange: true });
           this.router.navigate(['../login'], { relativeTo: this.route });
         },
         error: error => {

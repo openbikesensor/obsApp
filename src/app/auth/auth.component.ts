@@ -10,7 +10,6 @@ import { Errors, UserService } from '../core';
   templateUrl: './auth.component.html'
 })
 export class AuthComponent implements OnInit {
-  authType = '';
   title = '';
   errors: Errors = { errors: {} };
   isSubmitting = false;
@@ -27,22 +26,13 @@ export class AuthComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
-        Validators.pattern('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})')
+        Validators.minLength(6)
       ]],
     });
   }
 
   ngOnInit() {
-    this.route.url.subscribe(data => {
-      // Get the last piece of the URL (it's either 'login' or 'register')
-      this.authType = data[data.length - 1].path;
-      // Set a title for the page accordingly
-      this.title = (this.authType === 'login') ? 'Sign in' : 'Sign up';
-      // add form control for username if this is the register page
-      if (this.authType === 'register') {
-        this.authForm.addControl('username', new FormControl());
-      }
-    });
+    this.title = 'Login';
   }
 
   submitForm() {
@@ -51,7 +41,7 @@ export class AuthComponent implements OnInit {
 
     const credentials = this.authForm.value;
     this.userService
-      .attemptAuth(this.authType, credentials)
+      .attemptAuth(credentials)
       .subscribe(
         data => this.router.navigateByUrl('/'),
         err => {

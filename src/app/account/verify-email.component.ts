@@ -32,7 +32,7 @@ export class VerifyEmailComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: () => {
-          this.alertService.success('Verification successful, you can now login', { keepAfterRouteChange: true });
+          this.alertService.success('Die E-Mail-Verifikation wurde abgeschlossen. Sie können sich jetzt einloggen.', { keepAfterRouteChange: true });
           this.router.navigate(['../login'], { relativeTo: this.route });
         },
         error: () => {

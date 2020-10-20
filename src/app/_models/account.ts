@@ -1,8 +1,6 @@
 ﻿export class Account {
   id: string;
-  title: string;
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
   jwtToken?: string;
 }
