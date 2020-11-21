@@ -224,7 +224,7 @@ export class TrackComponent implements OnInit {
       target: 'trackMapView',
       view: new View({
         maxZoom: 22,
-        center: transform([long, lat], 'EPSG:4326', 'EPSG:3857'),
+        center: points[0] || fromLonLat([9.1797, 48.7784]),
         zoom: 15
       })
     });
