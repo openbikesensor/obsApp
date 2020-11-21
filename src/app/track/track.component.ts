@@ -115,7 +115,7 @@ export class TrackComponent implements OnInit {
       while (i < this.trackData.points.length) {
         lat = this.trackData.points[i].latitude;
         long = this.trackData.points[i].longitude;
-        if (lat !== 0.0 && long !== 0.0) {
+        if (lat && long) {
           break;
         }
         i++;
@@ -142,7 +142,7 @@ export class TrackComponent implements OnInit {
       while (i < this.trackData.points.length) {
         lat = this.trackData.points[i].latitude;
         long = this.trackData.points[i].longitude;
-        if (lat !== 0.0 && long !== 0.0) {
+        if (lat && long) {
           const p = fromLonLat([long, lat]);
           // var p = transform([long, lat], 'EPSG:4326', 'EPSG:3857');
           points.push(p);
