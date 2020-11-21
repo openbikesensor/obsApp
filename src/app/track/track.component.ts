@@ -108,8 +108,8 @@ export class TrackComponent implements OnInit {
     console.log(this.track.description);
     console.log(this.track.slug);
     console.log(this.trackData.points.length);
-    let lat = 48.7784;
-    let long = 9.1797;
+    let lat: number|null = 48.7784;
+    let long: number|null = 9.1797;
     let i = 0;
     if (this.trackData) {
       while (i < this.trackData.points.length) {
@@ -264,7 +264,7 @@ export class TrackComponent implements OnInit {
     for (const p of this.trackData.points) {
       fileContents += '<trkpt  lat="' + p.latitude + '" lon="' + p.longitude + '">\n' +
         '<name>' + nameCounter + '</name>\n';
-      if (p.flag > 0) {
+      if (p.flag != null && p.flag > 0) {
         fileContents += '<sym>Flag</sym>\n';
       }
       fileContents += '<cmt> d1="' + p.d1 + '" d2="' + p.d2 + '" </cmt>\n';
