@@ -294,8 +294,24 @@ export class TrackComponent implements OnInit {
     this.isExporting = true;
     let fileContents = 'Date;Time;Latitude;Longitude;Course;Speed;Right;Left;Confirmed;insidePrivacyArea\n';
     for (const p of this.trackData.points) {
-      fileContents += p.date + ';' + p.time + ';' + p.latitude + ';' + p.longitude + ';' +
-        p.course + ';' + p.speed + ';' + p.d1 + ';' + p.d2 + ';' + p.flag + ';' + p.private + ';\n';
+      fileContents += [p.date, p.time, p.latitude, p.longitude, p.course, p.speed, p.d1, p.d2, p.flag, p.private].map(
+        (value) => {
+          if (value == null) {
+            return ''
+          } else if (typeof value === 'number') {
+            return String(value)
+          } else if (typeof value === 'boolean') {
+            return value ? '1' : '0'
+          } else if (typeof value === 'string' && /[^a-zA-Z0-9_.,: -]/.test(value)) {
+            // properly escape strings that contain quotes, semicolons, or
+            // anything else that is weird
+            return JSON.stringify(value)
+          } else {
+            // unproblematic string can be returned as-is
+            return value
+          }
+        }
+      ).join(';') + ';\n'
     }
     const filename = 'track.csv';
     const filetype = 'text/plain';
