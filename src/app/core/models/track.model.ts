@@ -2,14 +2,14 @@ import { Profile } from './profile.model';
 export interface TPoint {
   date: string;
   time: string;
-  latitude: number;
-  longitude: number;
-  course: number;
-  speed: number;
-  d1: number;
-  d2: number;
-  flag: number;
-  private: number;
+  latitude: number|null;
+  longitude: number|null;
+  course: number|null;
+  speed: number|null;
+  d1: number|null;
+  d2: number|null;
+  flag: number|null;
+  private: boolean|null;
 }
 
 export interface TrackData {
