@@ -108,14 +108,14 @@ export class TrackComponent implements OnInit {
     console.log(this.track.description);
     console.log(this.track.slug);
     console.log(this.trackData.points.length);
-    let lat = 48.7784;
-    let long = 9.1797;
+    let lat: number|null = 48.7784;
+    let long: number|null = 9.1797;
     let i = 0;
     if (this.trackData) {
       while (i < this.trackData.points.length) {
         lat = this.trackData.points[i].latitude;
         long = this.trackData.points[i].longitude;
-        if (lat !== 0.0 && long !== 0.0) {
+        if (lat && long) {
           break;
         }
         i++;
@@ -142,7 +142,7 @@ export class TrackComponent implements OnInit {
       while (i < this.trackData.points.length) {
         lat = this.trackData.points[i].latitude;
         long = this.trackData.points[i].longitude;
-        if (lat !== 0.0 && long !== 0.0) {
+        if (lat && long) {
           const p = fromLonLat([long, lat]);
           // var p = transform([long, lat], 'EPSG:4326', 'EPSG:3857');
           points.push(p);
@@ -224,7 +224,7 @@ export class TrackComponent implements OnInit {
       target: 'trackMapView',
       view: new View({
         maxZoom: 22,
-        center: transform([long, lat], 'EPSG:4326', 'EPSG:3857'),
+        center: points[0] || fromLonLat([9.1797, 48.7784]),
         zoom: 15
       })
     });
@@ -264,7 +264,7 @@ export class TrackComponent implements OnInit {
     for (const p of this.trackData.points) {
       fileContents += '<trkpt  lat="' + p.latitude + '" lon="' + p.longitude + '">\n' +
         '<name>' + nameCounter + '</name>\n';
-      if (p.flag > 0) {
+      if (p.flag != null && p.flag > 0) {
         fileContents += '<sym>Flag</sym>\n';
       }
       fileContents += '<cmt> d1="' + p.d1 + '" d2="' + p.d2 + '" </cmt>\n';
@@ -294,8 +294,24 @@ export class TrackComponent implements OnInit {
     this.isExporting = true;
     let fileContents = 'Date;Time;Latitude;Longitude;Course;Speed;Right;Left;Confirmed;insidePrivacyArea\n';
     for (const p of this.trackData.points) {
-      fileContents += p.date + ';' + p.time + ';' + p.latitude + ';' + p.longitude + ';' +
-        p.course + ';' + p.speed + ';' + p.d1 + ';' + p.d2 + ';' + p.flag + ';' + p.private + ';\n';
+      fileContents += [p.date, p.time, p.latitude, p.longitude, p.course, p.speed, p.d1, p.d2, p.flag, p.private].map(
+        (value) => {
+          if (value == null) {
+            return ''
+          } else if (typeof value === 'number') {
+            return String(value)
+          } else if (typeof value === 'boolean') {
+            return value ? '1' : '0'
+          } else if (typeof value === 'string' && /[^a-zA-Z0-9_.,: -]/.test(value)) {
+            // properly escape strings that contain quotes, semicolons, or
+            // anything else that is weird
+            return JSON.stringify(value)
+          } else {
+            // unproblematic string can be returned as-is
+            return value
+          }
+        }
+      ).join(';') + ';\n'
     }
     const filename = 'track.csv';
     const filetype = 'text/plain';
