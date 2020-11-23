@@ -21,6 +21,7 @@ export interface Track {
   slug: string;
   title: string;
   description: string;
+  body: string | null;
   createdAt: string;
   updatedAt: string;
   author: Profile;

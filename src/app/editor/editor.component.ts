@@ -35,8 +35,16 @@ export class EditorComponent implements OnInit {
     // If there's a tack prefetched, load it
     this.route.data.subscribe((data: { track: Track }) => {
       if (data.track) {
-        this.track = data.track;
-        this.trackForm.patchValue(data.track);
+        // We're not adding the body back into the form here on purpose, so
+        // that we don't edit it. We shall only upload a new body if it is
+        // pasted in full. This is because some tracks don't contain the whole
+        // body, only parts of it, due to a bug in the old API code. See
+        // https://github.com/Friends-of-OpenBikeSensor/obsAPI/issues/20 for
+        // more details.
+        // TODO: Put body back in when obsAPI#20 is solved.
+        this.track = {...data.track};
+        this.track.body = null
+        this.trackForm.patchValue(this.track);
       }
     });
   }
