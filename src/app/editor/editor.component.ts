@@ -46,9 +46,9 @@ export class EditorComponent implements OnInit {
         // more details.
         // TODO: Put body back in when obsAPI#20 is solved.
         this.track = {...data.track};
-        this.track.body = null
+        this.track.body = null;
         this.trackForm.patchValue(this.track);
-        this.existing = true
+        this.existing = true;
       }
     });
   }

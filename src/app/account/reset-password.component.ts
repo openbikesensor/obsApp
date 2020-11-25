@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -75,7 +75,8 @@ export class ResetPasswordComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: () => {
-          this.alertService.success('Das Passwort wurde zurückgesetzt. Sie können sich jetzt mit dem neuen Passwort einloggen', { keepAfterRouteChange: true });
+          const msg = 'Das Passwort wurde zurückgesetzt. Sie können sich jetzt mit dem neuen Passwort einloggen';
+          this.alertService.success(msg, { keepAfterRouteChange: true });
           this.router.navigate(['../login'], { relativeTo: this.route });
         },
         error: error => {

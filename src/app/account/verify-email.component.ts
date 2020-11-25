@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 
@@ -32,7 +32,8 @@ export class VerifyEmailComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: () => {
-          this.alertService.success('Die E-Mail-Verifikation wurde abgeschlossen. Sie können sich jetzt einloggen.', { keepAfterRouteChange: true });
+          const msg = 'Die E-Mail-Verifikation wurde abgeschlossen. Sie können sich jetzt einloggen.';
+          this.alertService.success(msg, { keepAfterRouteChange: true });
           this.router.navigate(['../login'], { relativeTo: this.route });
         },
         error: () => {
