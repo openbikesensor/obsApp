@@ -48,14 +48,14 @@ cursor: pointer;
       <div class="col-md-12">
 
         <div [innerHTML]="track.description | markdown"></div>
-        
+
       </div>
       <div class="col-md-12">
 
         <div class="map-frame">
           <div id="trackMapView"></div>
         </div>
-        
+
       </div>
     </div>
 
@@ -63,6 +63,9 @@ cursor: pointer;
 
     <div class="track-actions">
       <app-track-meta [track]="track">
+        <i class="{{ track.visible ? 'ion-eye' : 'ion-eye-disabled' }}"></i>
+        {{ track.visible ? 'Visible' : 'Private' }}
+
 
           <span [hidden]="!canModify">
           <a class="btn btn-sm btn-outline-secondary"
@@ -75,13 +78,8 @@ cursor: pointer;
             (click)="deleteTrack()">
             <i class="ion-trash-a"></i> Delete Track
           </button>
-          
-            <label><input class="btn btn-sm btn-outline-danger"
-              type="checkbox"
-              (change)="onChange($event.target.checked)"
-              checked="{{ track.visible }}"/> visible </label>
         </span>
-        
+
         <button class="btn btn-sm btn-outline-secondary"
         [ngClass]="{disabled: isExporting}"
         (click)="exportGPX()">
