@@ -12,7 +12,9 @@ export class EditorComponent implements OnInit {
   track: Track = {} as Track;
   trackForm: FormGroup;
   errors: Object = {};
+  existing = false;
   isSubmitting = false;
+  visibleInfoVisible = false;
 
   constructor(
     private tracksService: TracksService,
@@ -24,7 +26,8 @@ export class EditorComponent implements OnInit {
     this.trackForm = this.fb.group({
       title: '',
       description: '',
-      body: ''
+      body: '',
+      visible: false,
     });
 
     // Optional: subscribe to value changes on the form
@@ -45,6 +48,7 @@ export class EditorComponent implements OnInit {
         this.track = {...data.track};
         this.track.body = null
         this.trackForm.patchValue(this.track);
+        this.existing = true
       }
     });
   }
@@ -67,5 +71,9 @@ export class EditorComponent implements OnInit {
 
   updateTrack(values: Object) {
     Object.assign(this.track, values);
+  }
+
+  toggleVisibleInfo() {
+    this.visibleInfoVisible  = !this.visibleInfoVisible ;
   }
 }

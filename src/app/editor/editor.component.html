@@ -7,33 +7,76 @@
 
         <form [formGroup]="trackForm">
           <fieldset [disabled]="isSubmitting">
-
             <fieldset class="form-group">
-              <input class="form-control form-control-lg"
+              <label for="title">Title</label>
+              <input
+                id="title"
                 formControlName="title"
                 type="text"
-                placeholder="Track Title" />
+                class="form-control form-control-lg" />
             </fieldset>
 
             <fieldset class="form-group">
-              <input class="form-control"
+              <label for="description">Description</label>
+              <textarea
+                id="description"
                 formControlName="description"
-                type="text"
-                placeholder="track description" />
-            </fieldset>
-
-            <fieldset class="form-group">
-              <textarea class="form-control"
-                formControlName="body"
-                rows="8"
-                placeholder="dummy track data">
+                rows="6"
+                class="form-control">
               </textarea>
             </fieldset>
 
-            <button class="btn btn-lg pull-xs-right btn-primary" type="button" (click)="submitForm()">
-              Add new Track
-            </button>
+            <fieldset class="form-group">
+              <label for="body">Track data</label>
+              <textarea
+                id="body"
+                class="form-control"
+                formControlName="body"
+                rows="6">
+              </textarea>
+              <p class="text-muted">
+                Paste your whole CSV file into this text field.
+                <span *ngIf="existing"> Leave empty to keep the current track data.</span>
+              </p>
+            </fieldset>
 
+            <fieldset class="form-group">
+              <input
+                type="checkbox"
+                id="visible"
+                formControlName="visible"
+                style="float: left; margin: 0.3rem;">
+              <div style="margin-left: 1.5rem;">
+                <label for="visible">Make track visible in public track list</label>
+                &nbsp;
+                <button class="btn btn-sm btn-secondary" (click)="toggleVisibleInfo()">
+                  <i class="ion-alert-circled"></i>
+                  Privacy info
+                </button>
+
+                <div *ngIf="visibleInfoVisible">
+                <p>
+                  Checking this box allows all users to see your full track.
+                  For your own privacy and security, make sure to only publish
+                  tracks in this way that do not let others deduct where you
+                  live, work, or frequently stay. Your recording device might
+                  have useful privacy settings to not record geolocation data
+                  near those places.
+                </p>
+                <p>
+                  In the future, this site will allow you to redact privacy
+                  sensitive data in tracks, both manually and automatically.
+                  Until then, you will have to rely on the features of your
+                  recording device, or manually redact your files before upload.
+                </p>
+                <p><b>Use at your own risk.</b></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <button class="btn btn-primary" type="button" (click)="submitForm()">
+              {{existing ? 'Save details' : 'Add new Track'}}
+            </button>
           </fieldset>
         </form>
 
