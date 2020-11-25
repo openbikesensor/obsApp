@@ -231,10 +231,6 @@ export class TrackComponent implements OnInit {
 
   }
 
-  onToggleFollowing(following: boolean) {
-    this.track.author.following = following;
-  }
-
   deleteTrack() {
     this.isDeleting = true;
 
