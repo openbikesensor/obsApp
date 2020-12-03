@@ -104,10 +104,8 @@ export class TrackComponent implements OnInit {
     this.populateComments();
     this.populateTrackData();
   }
+
   createMap() {
-    console.log(this.track.description);
-    console.log(this.track.slug);
-    console.log(this.trackData.points.length);
     let lat: number|null = 48.7784;
     let long: number|null = 9.1797;
     let i = 0;
@@ -125,13 +123,12 @@ export class TrackComponent implements OnInit {
     this.layers.push(
       new TileLayer({
         source: new OSM(/*{
-     attributions: [
-        'All maps © <a href="https://www.opencyclemap.org/">OpenCycleMap</a>',
-        ATTRIBUTION
-      ],
-      url: 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png' +
-          '?apikey=25763459938a4e9d9bec8bde3481f682'
-    }*/)
+          attributions: [
+            'All maps © <a href="https://www.opencyclemap.org/">OpenCycleMap</a>',
+            ATTRIBUTION
+          ],
+          url: 'https://{a-c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=25763459938a4e9d9bec8bde3481f682',
+        }*/)
       })
     );
 
@@ -229,17 +226,6 @@ export class TrackComponent implements OnInit {
       })
     });
 
-  }
-
-  deleteTrack() {
-    this.isDeleting = true;
-
-    this.tracksService.destroy(this.track.slug)
-      .subscribe(
-        success => {
-          this.router.navigateByUrl('/');
-        }
-      );
   }
 
   exportGPX() {

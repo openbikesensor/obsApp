@@ -1,11 +1,11 @@
 <div class="editor-page">
   <div class="container page">
     <div class="row">
-      <div class="col-md-10 offset-md-1 col-xs-12">
+      <div class="col-md-10 offset-md-1 col-sm-12">
 
         <app-list-errors [errors]="errors"></app-list-errors>
 
-        <form [formGroup]="trackForm">
+        <form [formGroup]="trackForm" (submit)="submitForm()">
           <fieldset [disabled]="isSubmitting">
             <fieldset class="form-group">
               <label for="title">Title</label>
@@ -74,12 +74,34 @@
               </div>
             </fieldset>
 
-            <button class="btn btn-primary" type="button" (click)="submitForm()">
+            <button class="btn btn-primary" type="submit" (click)="submitForm()">
               {{existing ? 'Save details' : 'Add new Track'}}
             </button>
           </fieldset>
         </form>
 
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col-md-10 offset-md-1 col-sm-12">
+        <h4>Danger zone</h4>
+
+        <p>
+          You can remove this track from your account and the portal if you
+          like. However, if at any point you have published this track, we
+          cannot guarantee that there are no versions of it in the public data
+          repository, or any copy thereof.
+        </p>
+
+        <button
+          class="btn btn-outline-danger"
+          [hidden]="!existing"
+          [ngClass]="{disabled: isDeleting}"
+          (click)="deleteTrack()"
+          >
+          Delete this track
+        </button>
       </div>
     </div>
   </div>

@@ -6,97 +6,109 @@
     height: 700px;
   }
   #tools {
-position: absolute;
-top: 1rem;
-right: 1rem;
-}
-#tools a {
-display: inline-block;
-padding: 0.5rem;
-background: white;
-cursor: pointer;
-}
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+  #tools a {
+    display: inline-block;
+    padding: 0.5rem;
+    background: white;
+    cursor: pointer;
+  }
 </style>
 <div class="track-page">
 
   <div class="banner">
     <div class="container">
-      <h1>{{ track.title }}</h1>
-<!--
-      <app-track-meta [track]="track">
-
-          <span [hidden]="!canModify">
-          <a class="btn btn-sm btn-outline-secondary"
-             [routerLink]="['/editor', track.slug]">
-            <i class="ion-edit"></i> Edit Track
-          </a>
-
-          <button class="btn btn-sm btn-outline-danger"
-            [ngClass]="{disabled: isDeleting}"
-            (click)="deleteTrack()">
-            <i class="ion-trash-a"></i> Delete Track
-          </button>
-        </span>
-
-      </app-track-meta>-->
+      <h1 class="display-4">{{ track.title }}</h1>
     </div>
   </div>
 
   <div class="container page">
+    <div class="map-frame">
+      <div id="trackMapView"></div>
+    </div>
 
-    <div class="row track-content">
-      <div class="col-md-12">
-
+    <div class="row">
+      <div class="col-md-8">
         <div [innerHTML]="track.description | markdown"></div>
 
-      </div>
-      <div class="col-md-12">
+        <div class="track-actions">
+          <app-track-meta [track]="track">
+        <div class="btn-group" role="group">
+        <a class="btn btn-sm btn-secondary"
+           [hidden]="!canModify"
+           [routerLink]="['/editor', track.slug]">
+          <i class="ion-edit"></i> Edit Track
+        </a>
 
-        <div class="map-frame">
-          <div id="trackMapView"></div>
+        <button class="btn btn-sm btn-secondary"
+                [ngClass]="{disabled: isExporting}"
+                (click)="exportGPX()">
+          <i class="ion-share"></i> Export GPX
+        </button>
+
+        <button class="btn btn-sm btn-secondary"
+                [ngClass]="{disabled: isExporting}"
+                (click)="exportCSV()">
+          <i class="ion-clipboard"></i> Export CSV
+        </button>
         </div>
 
+
+          </app-track-meta>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <h4>Track details</h4>
+
+        <dl class="row">
+          <dt class="col-sm-6">Visibility</dt>
+          <dd class="col-sm-6">
+            <i class="{{ track.visible ? 'ion-eye' : 'ion-eye-disabled' }}"></i>
+            {{ track.visible ? 'Public' : 'Private' }}
+          </dd>
+
+          <dt class="col-sm-6" [hidden]="!track.uploadedByUserAgent">Uploaded with</dt>
+          <dd class="col-sm-6" [hidden]="!track.uploadedByUserAgent">
+            <code>{{track.uploadedByUserAgent}}</code>
+          </dd>
+
+          <dt class="col-sm-6">Uploaded on</dt>
+          <dd class="col-sm-6">
+            {{track.createdAt|date}}
+          </dd>
+
+          <dt class="col-sm-6" [hidden]="!trackData || !trackData.recordedAt">Recorded on</dt>
+          <dd class="col-sm-6" [hidden]="!trackData || !trackData.recordedAt">
+            {{trackData && trackData.recordedAt|date}}
+          </dd>
+
+          <dt class="col-sm-6" [hidden]="!trackData || !trackData.numEvents == null">Confirmed events</dt>
+          <dd class="col-sm-6" [hidden]="!trackData || !trackData.numEvents == null">
+            {{trackData && trackData.numEvents}}
+          </dd>
+
+          <dt class="col-sm-6" [hidden]="!trackData || !trackData.trackLength == null">Length</dt>
+          <dd class="col-sm-6" [hidden]="!trackData || !trackData.trackLength == null">
+            {{trackData && trackData.trackLength/1000 | number:'1.2-2' }} km
+          </dd>
+
+          <dt class="col-sm-6" [hidden]="!(trackData && trackData.duration)">Duration</dt>
+          <dd class="col-sm-6" [hidden]="!(trackData && trackData.duration)">
+          {{ trackData ? (trackData.duration * 1000 | durationFromMilliseconds | durationToFormat:'h\'h\' mm\'m\'') : null }}
+          </dd>
+        </dl>
       </div>
     </div>
 
     <hr />
 
-    <div class="track-actions">
-      <app-track-meta [track]="track">
-        <i class="{{ track.visible ? 'ion-eye' : 'ion-eye-disabled' }}"></i>
-        {{ track.visible ? 'Visible' : 'Private' }}
-
-
-          <span [hidden]="!canModify">
-          <a class="btn btn-sm btn-outline-secondary"
-             [routerLink]="['/editor', track.slug]">
-            <i class="ion-edit"></i> Edit Track
-          </a>
-
-          <button class="btn btn-sm btn-outline-danger"
-            [ngClass]="{disabled: isDeleting}"
-            (click)="deleteTrack()">
-            <i class="ion-trash-a"></i> Delete Track
-          </button>
-        </span>
-
-        <button class="btn btn-sm btn-outline-secondary"
-        [ngClass]="{disabled: isExporting}"
-        (click)="exportGPX()">
-        <i class="ion-share"></i> Export GPX
-      </button>
-
-      <button class="btn btn-sm btn-outline-secondary"
-      [ngClass]="{disabled: isExporting}"
-      (click)="exportCSV()">
-      <i class="ion-clipboard"></i> Export CSV
-    </button>
-
-      </app-track-meta>
-    </div>
-
     <div class="row">
       <div class="col-xs-12 col-md-8 offset-md-2">
+        <h4>Comments</h4>
 
         <div *appShowAuthed="true">
           <app-list-errors [errors]="commentFormErrors"></app-list-errors>

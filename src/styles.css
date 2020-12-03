@@ -3,16 +3,23 @@
 @import "ol/ol.css";
 
 .map-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 30px;
-  }
-  
-  .map-frame {
-    border: 2px solid black;
-    height: 100%;
-  }
-#trackMapView { height: 400px; min-width: 480px;}
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 30px;
+}
+
+.map-frame {
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 100%;
+  margin: 2rem 0;
+}
+
+#trackMapView {
+  height: 400px;
+  min-width: 480px;
+}

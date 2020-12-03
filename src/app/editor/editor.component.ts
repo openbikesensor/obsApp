@@ -73,6 +73,20 @@ export class EditorComponent implements OnInit {
     Object.assign(this.track, values);
   }
 
+  deleteTrack() {
+    if (window.confirm('Are you sure?')) {
+      this.isSubmitting = true;
+
+      this.tracksService.destroy(this.track.slug)
+        .subscribe(
+          success => {
+            this.router.navigateByUrl('/');
+          }
+        );
+    }
+  }
+
+
   toggleVisibleInfo() {
     this.visibleInfoVisible  = !this.visibleInfoVisible ;
   }

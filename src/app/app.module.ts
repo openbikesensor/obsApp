@@ -21,7 +21,7 @@ import { AlertComponent } from './_components/alert.component';
     SharedModule,
     HomeModule,
     AccountModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
