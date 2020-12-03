@@ -14,10 +14,10 @@ export class TrackDataService {
   ) {}
 
   getAll(slug): Observable<TrackData> {
-    return this.apiService.get(`/tracks/${slug}/TrackData`).pipe(map(data => data.trackData));
+    return this.apiService.get(`/tracks/${slug}/data`).pipe(map(data => data.trackData));
   }
   getTrackData(slug): TrackData {
-    this.apiService.get(`/tracks/${slug}/TrackData`).pipe(map(data => data.trackData)).subscribe(trackData => this.trackData = trackData);
+    this.apiService.get(`/tracks/${slug}/data`).pipe(map(data => data.trackData)).subscribe(trackData => this.trackData = trackData);
     return this.trackData;
   }
 
