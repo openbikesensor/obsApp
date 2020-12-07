@@ -36,25 +36,25 @@
 
         <div class="track-actions">
           <app-track-meta [track]="track">
-        <div class="btn-group" role="group">
-        <a class="btn btn-sm btn-secondary"
-           [hidden]="!canModify"
-           [routerLink]="['/editor', track.slug]">
-          <i class="ion-edit"></i> Edit Track
-        </a>
+            <div class="btn-group" role="group">
+              <a class="btn btn-sm btn-secondary"
+                 [hidden]="!canModify"
+                 [routerLink]="['/editor', track.slug]">
+                <i class="ion-edit"></i> Edit Track
+              </a>
 
-        <button class="btn btn-sm btn-secondary"
-                [ngClass]="{disabled: isExporting}"
-                (click)="exportGPX()">
-          <i class="ion-share"></i> Export GPX
-        </button>
+              <button class="btn btn-sm btn-secondary"
+                      [ngClass]="{disabled: isExporting}"
+                      (click)="exportGPX()">
+                <i class="ion-share"></i> Export GPX
+              </button>
 
-        <button class="btn btn-sm btn-secondary"
-                [ngClass]="{disabled: isExporting}"
-                (click)="exportCSV()">
-          <i class="ion-clipboard"></i> Export CSV
-        </button>
-        </div>
+              <button class="btn btn-sm btn-secondary"
+                      [ngClass]="{disabled: isExporting}"
+                      (click)="exportCSV()">
+                <i class="ion-clipboard"></i> Export CSV
+              </button>
+            </div>
 
 
           </app-track-meta>
@@ -108,6 +108,10 @@
         </dl>
       </div>
     </div>
+
+    <hr />
+
+    <div echarts [options]="chartOptions" style="height: 400px; width: 100%; background-color: #EEE;"></div>
 
     <hr />
 

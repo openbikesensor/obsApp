@@ -1,32 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import {DateTime} from 'luxon';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import OSM, { ATTRIBUTION } from 'ol/source/OSM';
-import { transform } from 'ol/proj.js';
-import { Geometry, LineString, Point, Polygon } from 'ol/geom';
+import OSM from 'ol/source/OSM';
+import { Geometry, LineString, Point } from 'ol/geom';
 import { Vector as VectorLayer } from 'ol/layer';
-import { TileJSON, Vector as VectorSource } from 'ol/source';
-import { Fill, Icon, Stroke, Style } from 'ol/style';
+import { Vector as VectorSource } from 'ol/source';
+import { Stroke, Style } from 'ol/style';
 import { SymbolType } from 'ol/style/LiteralStyle';
 import Feature from 'ol/Feature';
 import proj4 from 'proj4';
 import { register } from 'ol/proj/proj4';
-import colormap from 'colormap';
 import { fromLonLat } from 'ol/proj';
 import Renderer from 'ol/renderer/webgl/PointsLayer';
-import { clamp } from 'ol/math';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
-import { map } from 'rxjs/operators';
+import {zip} from 'lodash'
 
 
-import { ApiService } from '../core/services/api.service';
 import {
   Track,
-  TracksService,
   TrackData,
   TrackDataService,
   Comment,
@@ -42,7 +38,6 @@ import { Coordinate } from 'ol/coordinate';
 proj4.defs('projLayer1', '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs');
 
 register(proj4);
-const color = [0.3, 0.3, 1, 0.5];
 
 
 export class CustomLayer extends VectorLayer {
@@ -63,8 +58,6 @@ export class CustomLayer extends VectorLayer {
   selector: 'app-track-page',
   templateUrl: './track.component.html'
 })
-
-
 export class TrackComponent implements OnInit {
   track: Track;
   trackData: TrackData;
@@ -78,14 +71,13 @@ export class TrackComponent implements OnInit {
   isExporting = false;
   layers: (VectorLayer | TileLayer | WebGLPointsLayer)[] = [];
 
+  chartOptions: any;
+
   constructor(
     private route: ActivatedRoute,
-    private tracksService: TracksService,
     private commentsService: CommentsService,
     private trackDataService: TrackDataService,
-    private router: Router,
     private userService: UserService,
-    private apiService: ApiService,
   ) { }
 
   ngOnInit() {
@@ -103,6 +95,48 @@ export class TrackComponent implements OnInit {
       });
     this.populateComments();
     this.populateTrackData();
+  }
+
+  createChart() {
+    const timestamps = this.trackData.points.map(p => DateTime.fromFormat(`${p.date} ${p.time}`, 'dd.MM.yyyy HH:mm:ss').toMillis())
+    const left = this.trackData.points.map(p => p.d1)
+    const right = this.trackData.points.map(p => p.d2 ? -p.d2 : null)
+
+
+    this.chartOptions = {
+      xAxis: {
+        type: 'time',
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        // {
+        //   name: 'speed',
+        //   type: 'line',
+        //   data: zip(timestamps, speedData),
+        //   animation: false,
+        // },
+        {
+          name: 'left',
+          type: 'line',
+          data: zip(timestamps, left),
+          animation: false,
+          markPoint: {
+            data: zip(timestamps, this.trackData.points).filter(([,p]) => p.flag).map(([ts,p]) => ({xAxis: ts, yAxis: p.d1, value: p.d1})),
+          }
+        },
+        {
+          name: 'right',
+          type: 'line',
+          data: zip(timestamps, right),
+          animation: false,
+        },
+      ],
+      dataZoom: [{
+        xAxisIndex: 0
+      }],
+    } as any;
   }
 
   createMap() {
@@ -216,15 +250,6 @@ export class TrackComponent implements OnInit {
 
         });
     this.layers.push(pointLayer);
-    const olMap = new Map({
-      layers: this.layers,
-      target: 'trackMapView',
-      view: new View({
-        maxZoom: 22,
-        center: points[0] || fromLonLat([9.1797, 48.7784]),
-        zoom: 15
-      })
-    });
 
   }
 
@@ -311,7 +336,9 @@ export class TrackComponent implements OnInit {
   populateTrackData() {
     // this.trackData = this.trackDataService.getTrackData(this.track.slug);
     this.trackDataService.getAll(this.track.slug)
-      .subscribe(trackData => { this.trackData = trackData; this.createMap(); });
+      .subscribe(trackData => { this.trackData = trackData; this.createMap();
+        this.createChart();
+      });
   }
 
   addComment() {
@@ -337,7 +364,7 @@ export class TrackComponent implements OnInit {
   onDeleteComment(comment) {
     this.commentsService.destroy(comment.id, this.track.slug)
       .subscribe(
-        success => {
+        () => {
           this.comments = this.comments.filter((item) => item !== comment);
         }
       );

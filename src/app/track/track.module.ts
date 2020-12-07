@@ -1,6 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LuxonModule } from 'luxon-angular';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 import { TrackComponent } from './track.component';
 import { TrackCommentComponent } from './track-comment.component';
@@ -14,6 +15,9 @@ import { TrackRoutingModule } from './track-routing.module';
     SharedModule,
     TrackRoutingModule,
     LuxonModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    })
   ],
   declarations: [
     TrackComponent,
