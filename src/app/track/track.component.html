@@ -100,6 +100,11 @@
           <dd class="col-sm-6" [hidden]="!(trackData && trackData.duration)">
           {{ trackData ? (trackData.duration * 1000 | durationFromMilliseconds | durationToFormat:'h\'h\' mm\'m\'') : null }}
           </dd>
+
+          <dt class="col-sm-6" [hidden]="!track.originalFileName">Filename</dt>
+          <dd class="col-sm-6" [hidden]="!track.originalFileName">
+            {{track.originalFileName}}
+          </dd>
         </dl>
       </div>
     </div>
