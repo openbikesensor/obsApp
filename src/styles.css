@@ -1,25 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "~leaflet/dist/leaflet.css";*/
-@import "ol/ol.css";
+@import "~ol/ol.css";
+@import "~ol-layerswitcher/dist/ol-layerswitcher.css";
 
-.map-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 30px;
-}
 
-.map-frame {
-  border: 1px solid #333;
-  border-radius: 4px;
-  overflow: hidden;
-  height: 100%;
-  margin: 2rem 0;
-}
-
-#trackMapView {
-  height: 400px;
-  min-width: 480px;
+.layer-switcher {
+  top: 0.5em;
 }

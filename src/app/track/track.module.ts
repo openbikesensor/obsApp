@@ -2,6 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LuxonModule } from 'luxon-angular';
 import { NgxEchartsModule } from 'ngx-echarts';
+import 'ol-layerswitcher/dist/ol-layerswitcher.css';
 
 import { TrackComponent } from './track.component';
 import { TrackCommentComponent } from './track-comment.component';
