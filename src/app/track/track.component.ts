@@ -15,8 +15,6 @@ import {fromLonLat} from 'ol/proj';
 import LayerSwitcher, {BaseLayerOptions, GroupLayerOptions} from 'ol-layerswitcher';
 
 
-
-
 import {ApiService} from '../core/services/api.service';
 import {Comment, CommentsService, Track, TrackData, TrackDataService, TracksService, User, UserService} from '../core';
 import {Coordinate} from 'ol/coordinate';
@@ -111,8 +109,6 @@ export class TrackComponent implements OnInit {
                     points.push(p);
 
 
-
-
                     if (dataPoint.flag) {
                         if (dataPoint.d1) {
                             trackPointsD1.push(
@@ -186,7 +182,6 @@ export class TrackComponent implements OnInit {
             });
 
 
-
         const pointLayerTaqgedD1 =
             new VectorLayer(
                 {
@@ -212,7 +207,6 @@ export class TrackComponent implements OnInit {
                     }),
 
                 } as BaseLayerOptions);
-
 
 
         const pointLayerUntaggedD1 =
@@ -243,9 +237,8 @@ export class TrackComponent implements OnInit {
                 } as BaseLayerOptions);
 
 
-
         const olMap = new Map({
-            layers:  [
+            layers: [
                 tileLayer,
                 trackLayer,
                 new Group({
@@ -266,7 +259,7 @@ export class TrackComponent implements OnInit {
 
                     ]
                 } as GroupLayerOptions)
-                ],
+            ],
             target: 'trackMapView',
             view: new View({
                 maxZoom: 22,
@@ -286,40 +279,64 @@ export class TrackComponent implements OnInit {
         olMap.addControl(layerSwitcher);
 
 
-        const distanceLimit = 150
-
-
         function pointStyleFunction(feature, resolution) {
             let distance = feature.get("distance");
-
-            let redStroke = new Stroke({color: 'rgb(255, 0, 0)'})
-            let yellowStroke = new Stroke({color: 'rgb(255,233,87)'})
-            let greenStroke = new Stroke({color: 'rgb(50, 205, 50)'})
-            let redFill = new Fill({color: 'rgba(255, 0, 0, 0.2)'})
-            let yellowFill = new Fill({color: 'rgba(255,233,87,0.2)'})
-            let greenFill = new Fill({color: 'rgba(50, 205, 50, 0.2)'})
-
             let radius = 200 / resolution;
+
             return new Style({
                 image: new CircleStyle({
                     radius: radius < 20 ? radius : 20,
-                    fill: distance < distanceLimit ? redFill : greenFill,
-                    stroke: distance < distanceLimit ? redStroke : greenStroke,
+                    fill: evaluateDistanceForFillColor(distance),
+                    stroke: evaluateDistanceForStrokeColor(distance)
                 }),
                 text: createTextStyle(distance, resolution),
             });
         }
 
-        const createTextStyle = function (distance, resolution) {
-            let redFill = new Fill({color: 'red'})
-            let greenFill = new Fill({color: 'green'})
 
+        const evaluateDistanceForFillColor = function (distance) {
+            let redFill = new Fill({color: 'rgba(255, 0, 0, 0.2)'})
+            let orangeFill = new Fill({color: 'rgba(245,134,0,0.2)'})
+            let greenFill = new Fill({color: 'rgba(50, 205, 50, 0.2)'})
+
+            switch (evaluateDistanceColor(distance)) {
+                case 'red': return redFill
+                case 'orange': return orangeFill
+                case 'green': return greenFill
+            }
+        }
+
+        const evaluateDistanceForStrokeColor = function (distance) {
+            let redStroke = new Stroke({color: 'rgb(255, 0, 0)'})
+            let orangeStroke = new Stroke({color: 'rgb(245,134,0)'})
+            let greenStroke = new Stroke({color: 'rgb(50, 205, 50)'})
+
+            switch (evaluateDistanceColor(distance)) {
+                case 'red': return redStroke
+                case 'orange': return orangeStroke
+                case 'green': return greenStroke
+            }
+        }
+
+        const evaluateDistanceColor = function (distance) {
+            const distanceLimit1 = 200
+            const distanceLimit2 = 150
+            if (distance < distanceLimit2) {
+                return 'red'
+            } else if (distance < distanceLimit1) {
+                return 'orange'
+            } else {
+                return 'green'
+            }
+        }
+
+        const createTextStyle = function (distance, resolution) {
             return new Text({
                 textAlign: 'center',
                 textBaseline: 'middle',
                 font: 'normal 18px/1 Arial',
                 text: resolution < 6 ? "" + distance : "",
-                fill: distance < distanceLimit ? redFill : greenFill,
+                fill: new Fill({color: evaluateDistanceColor(distance)}),
                 stroke: new Stroke({color: 'white', width: 2}),
                 offsetX: 0,
                 offsetY: 0
