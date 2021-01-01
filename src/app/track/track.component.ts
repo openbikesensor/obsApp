@@ -15,15 +15,14 @@ import {fromLonLat} from 'ol/proj';
 import LayerSwitcher, {BaseLayerOptions, GroupLayerOptions} from 'ol-layerswitcher';
 
 
-import {ApiService} from '../core/services/api.service';
+import {ApiService} from '../core/services';
 import {Comment, CommentsService, Track, TrackData, TrackDataService, TracksService, User, UserService} from '../core';
 import {Coordinate} from 'ol/coordinate';
-import LayerGroup from "ol/layer/Group";
 import VectorLayer from "ol/layer/Vector";
 
 import CircleStyle from "ol/style/Circle";
 import Group from "ol/layer/Group";
-import {tile} from "ol/loadingstrategy";
+import {AppSettings} from "../AppSettings";
 
 
 proj4.defs('projLayer1', '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs');
@@ -35,7 +34,7 @@ const color = [0.3, 0.3, 1, 0.5];
 @Component({
     selector: 'app-track-page',
     templateUrl: './track.component.html',
-    styleUrls: ['./track.component.css']
+    styleUrls: ['track.component.css']
 })
 
 
@@ -63,7 +62,7 @@ export class TrackComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Retreive the prefetched track
+        // Retrieve the prefetched track
         this.route.data.subscribe(
             (data: { track: Track }) => {
                 this.track = data.track;
@@ -95,16 +94,12 @@ export class TrackComponent implements OnInit {
         const trackPointsD2: Feature<Geometry>[] = [];
         const trackPointsUntaggedD1: Feature<Geometry>[] = [];
         const trackPointsUntaggedD2: Feature<Geometry>[] = [];
-        const trackLines: Feature[] = [];
         const points: Coordinate[] = [];
 
-        if (this.trackData) {
-            let filteredPoints = this.trackData.points.filter(point => point.latitude && point.longitude)
-
-            for (let i = 0; i < filteredPoints.length; i++) {
-                let dataPoint = filteredPoints[i];
-                let nextDataPoint = filteredPoints[i + 50] ? filteredPoints[i + 50] : filteredPoints[i];
-                if (dataPoint.latitude && dataPoint.longitude && nextDataPoint.latitude && nextDataPoint.longitude) {
+        if (this.trackData && this.trackData.filteredPoints) {
+            for (let i = 0; i < this.trackData.filteredPoints.length; i++) {
+                let dataPoint = this.trackData.filteredPoints[i];
+                if (dataPoint.latitude && dataPoint.longitude) {
                     const p = fromLonLat([dataPoint.longitude, dataPoint.latitude]);
                     points.push(p);
 
@@ -148,29 +143,21 @@ export class TrackComponent implements OnInit {
                     }
                 }
             }
-
-            //Simplify to 1 point per 2 meter
-            let lineString = new LineString(points);
-
-            let simplifiedLineStringGeometry = lineString
-                .simplify(2);
-
-            trackLines.push(
-                new Feature(
-                    simplifiedLineStringGeometry
-                )
-            );
         }
 
+        //Simplify to 1 point per 2 meter
         const trackVectorSource = new VectorSource({
-            features: trackLines
-        })
+            features: [
+                new Feature(new LineString(points).simplify(2))
+            ]
+        });
 
         const trackLayer =
             new VectorLayer({
                 visible: true,
                 updateWhileAnimating: false,
                 updateWhileInteracting: false,
+
                 source: trackVectorSource,
                 style: new Style({
                     stroke: new Stroke({
@@ -182,61 +169,6 @@ export class TrackComponent implements OnInit {
             });
 
 
-        const pointLayerTaqgedD1 =
-            new VectorLayer(
-                {
-                    title: "Left",
-                    visible: true,
-                    style: pointStyleFunction,
-                    source: new VectorSource({
-                        features: trackPointsD1
-                    }),
-
-                } as BaseLayerOptions);
-
-
-        const pointLayerTaggedD2 =
-            new VectorLayer(
-                {
-                    startActive: false,
-                    title: "Right",
-                    visible: false,
-                    style: pointStyleFunction,
-                    source: new VectorSource({
-                        features: trackPointsD2
-                    }),
-
-                } as BaseLayerOptions);
-
-
-        const pointLayerUntaggedD1 =
-            new VectorLayer(
-                {
-                    startActive: false,
-                    title: "Left Untagged",
-                    visible: false,
-                    style: pointStyleFunction,
-                    source: new VectorSource({
-                        features: trackPointsUntaggedD1
-                    }),
-
-                } as BaseLayerOptions);
-
-
-        const pointLayerUntaggedD2 =
-            new VectorLayer(
-                {
-                    startActive: false,
-                    title: "Right Untagged",
-                    visible: false,
-                    style: pointStyleFunction,
-                    source: new VectorSource({
-                        features: trackPointsUntaggedD2
-                    }),
-
-                } as BaseLayerOptions);
-
-
         const olMap = new Map({
             layers: [
                 tileLayer,
@@ -244,8 +176,8 @@ export class TrackComponent implements OnInit {
                 new Group({
                     title: 'Tagged Points',
                     layers: [
-                        pointLayerTaqgedD1,
-                        pointLayerTaggedD2
+                        getPointLayer(trackPointsD1, "Left", true),
+                        getPointLayer(trackPointsD2, "Right", false),
 
                     ]
                 } as GroupLayerOptions),
@@ -254,8 +186,8 @@ export class TrackComponent implements OnInit {
                     fold: 'close',
                     visible: false,
                     layers: [
-                        pointLayerUntaggedD1,
-                        pointLayerUntaggedD2
+                        getPointLayer(trackPointsUntaggedD1, "Left Untagged", false),
+                        getPointLayer(trackPointsUntaggedD2, "Right Untagged", false),
 
                     ]
                 } as GroupLayerOptions)
@@ -267,6 +199,19 @@ export class TrackComponent implements OnInit {
                 zoom: 15
             })
         });
+
+        function getPointLayer(trackPoints : Feature<Geometry>[], title, visible) {
+            return new VectorLayer(
+                {
+                    title: title,
+                    visible: visible,
+                    style: pointStyleFunction,
+                    source: new VectorSource({
+                        features: trackPoints
+                    }),
+
+                } as BaseLayerOptions);
+        }
 
         const layerSwitcher = new LayerSwitcher({
             groupSelectStyle: 'children',
@@ -295,35 +240,39 @@ export class TrackComponent implements OnInit {
 
 
         const evaluateDistanceForFillColor = function (distance) {
-            let redFill = new Fill({color: 'rgba(255, 0, 0, 0.2)'})
-            let orangeFill = new Fill({color: 'rgba(245,134,0,0.2)'})
-            let greenFill = new Fill({color: 'rgba(50, 205, 50, 0.2)'})
+            const redFill = new Fill({color: 'rgba(255, 0, 0, 0.2)'})
+            const orangeFill = new Fill({color: 'rgba(245,134,0,0.2)'})
+            const greenFill = new Fill({color: 'rgba(50, 205, 50, 0.2)'})
 
             switch (evaluateDistanceColor(distance)) {
-                case 'red': return redFill
-                case 'orange': return orangeFill
-                case 'green': return greenFill
+                case 'red':
+                    return redFill
+                case 'orange':
+                    return orangeFill
+                case 'green':
+                    return greenFill
             }
         }
 
         const evaluateDistanceForStrokeColor = function (distance) {
-            let redStroke = new Stroke({color: 'rgb(255, 0, 0)'})
-            let orangeStroke = new Stroke({color: 'rgb(245,134,0)'})
-            let greenStroke = new Stroke({color: 'rgb(50, 205, 50)'})
+            const redStroke = new Stroke({color: 'rgb(255, 0, 0)'})
+            const orangeStroke = new Stroke({color: 'rgb(245,134,0)'})
+            const greenStroke = new Stroke({color: 'rgb(50, 205, 50)'})
 
             switch (evaluateDistanceColor(distance)) {
-                case 'red': return redStroke
-                case 'orange': return orangeStroke
-                case 'green': return greenStroke
+                case 'red':
+                    return redStroke
+                case 'orange':
+                    return orangeStroke
+                case 'green':
+                    return greenStroke
             }
         }
 
         const evaluateDistanceColor = function (distance) {
-            const distanceLimit1 = 200
-            const distanceLimit2 = 150
-            if (distance < distanceLimit2) {
+            if (distance < AppSettings.MIN_DISTANCE) {
                 return 'red'
-            } else if (distance < distanceLimit1) {
+            } else if (distance < AppSettings.WARN_DISTANCE) {
                 return 'orange'
             } else {
                 return 'green'
@@ -436,10 +385,11 @@ export class TrackComponent implements OnInit {
     }
 
     populateTrackData() {
-        // this.trackData = this.trackDataService.getTrackData(this.track.slug);
         this.trackDataService.getAll(this.track.slug)
             .subscribe(trackData => {
                 this.trackData = trackData;
+                // != undefined checks for null and undefined
+                this.trackData.filteredPoints = trackData.points.filter(point => point.latitude != undefined && point.longitude != undefined)
                 this.createMap();
             });
     }
