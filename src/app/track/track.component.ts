@@ -297,11 +297,6 @@ export class TrackComponent implements OnInit {
 
     }
 
-    matchRoute() {
-
-    }
-
-
     exportGPX() {
         this.isExporting = true;
         let fileContents = '<?xml version="1.0"?>\n' +
