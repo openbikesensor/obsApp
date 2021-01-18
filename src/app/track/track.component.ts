@@ -304,7 +304,7 @@ export class TrackComponent implements OnInit {
         fileContents += '<trk>\n';
         fileContents += '<trkseg>\n';
         let nameCounter = 1;
-        for (const p of this.trackData.points) {
+        for (const p of this.trackData.filteredPoints) {
             fileContents += '<trkpt  lat="' + p.latitude + '" lon="' + p.longitude + '">\n' +
                 '<name>' + nameCounter + '</name>\n';
             if (p.flag != null && p.flag > 0) {
