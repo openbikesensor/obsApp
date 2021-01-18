@@ -15,6 +15,7 @@ export interface TPoint {
 export interface TrackData {
   slug: string;
   points: TPoint[];
+  filteredPoints: TPoint[];
 }
 
 export interface Track {
