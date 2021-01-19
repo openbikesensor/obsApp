@@ -49,16 +49,16 @@
               <div style="margin-left: 1.5rem;">
                 <label for="visible">Make track visible in public track list</label>
                 &nbsp;
-                <button class="btn btn-sm btn-secondary" (click)="toggleVisibleInfo()">
+                <span class="btn btn-sm btn-secondary" (click)="toggleVisibleInfo()">
                   <i class="ion-alert-circled"></i>
                   Privacy info
-                </button>
+                </span>
 
                 <div *ngIf="visibleInfoVisible">
                 <p>
                   Checking this box allows all users to see your full track.
                   For your own privacy and security, make sure to only publish
-                  tracks in this way that do not let others deduct where you
+                  tracks in this way that do not let others deduce where you
                   live, work, or frequently stay. Your recording device might
                   have useful privacy settings to not record geolocation data
                   near those places.
