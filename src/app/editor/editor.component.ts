@@ -42,7 +42,7 @@ export class EditorComponent implements OnInit {
         // that we don't edit it. We shall only upload a new body if it is
         // pasted in full. This is because some tracks don't contain the whole
         // body, only parts of it, due to a bug in the old API code. See
-        // https://github.com/Friends-of-OpenBikeSensor/obsAPI/issues/20 for
+        // https://github.com/openbikesensor/obsAPI/issues/20 for
         // more details.
         // TODO: Put body back in when obsAPI#20 is solved.
         this.track = {...data.track};
