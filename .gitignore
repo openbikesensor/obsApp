@@ -106,3 +106,5 @@ dist
 .vscode/c_cpp_properties.json
 
 .idea/
+
+package-lock.json
